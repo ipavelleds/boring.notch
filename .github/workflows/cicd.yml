@@ -26,6 +26,17 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
+
+    - name: Cache Swift packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/Library/Developer/Xcode/DerivedData
+          ~/.build
+          Build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
     
     - name: Generate Tag
       id: tag
@@ -46,7 +57,7 @@ jobs:
         xcode-version: latest-stable
     
     - name: Resolve Swift dependencies
-      run: xcodebuild -resolvePackageDependencies
+      run: xcodebuild -resolvePackageDependencies -quiet
       
     - name: Build
       run: |
@@ -57,6 +68,8 @@ jobs:
           CODE_SIGNING_ALLOWED=NO \
           OTHER_CODE_SIGN_FLAGS="--options=runtime" \
           -archivePath ./build/boringNotch.xcarchive \
+          -parallel-testing-enabled YES \
+          -quiet \
           archive
 
     - name: Prepare App for Distribution
@@ -104,6 +117,7 @@ jobs:
         name: boringNotch
         path: ./build/boringNotch.dmg
         retention-days: 1
+        compression-level: 0  # Disable compression for faster upload
 
   release:
     name: Create Release
