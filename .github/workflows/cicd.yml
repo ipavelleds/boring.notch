@@ -19,6 +19,8 @@ jobs:
   build:
     name: Build boringNotch
     runs-on: macos-latest
+    outputs:
+      tag_name: ${{ steps.tag.outputs.tag_name }}
     steps:
     - name: Code Checkout
       uses: actions/checkout@v3
@@ -26,11 +28,13 @@ jobs:
         fetch-depth: 0
     
     - name: Generate Tag
+      id: tag
       if: github.event_name == 'push'
       run: |
         current_date=$(date +'%Y%m%d')
         build_number=$(git rev-list --count HEAD)
         tag_name="v${current_date}.${build_number}"
+        echo "tag_name=${tag_name}" >> $GITHUB_OUTPUT
         git tag $tag_name
         git push origin $tag_name
       env:
@@ -73,13 +77,25 @@ jobs:
       with:
         name: boringNotch
         path: ./build/boringNotch.dmg
-        
-    - name: Create Release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ./build/boringNotch.dmg
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        retention-days: 1
+
+  release:
+    name: Create Release
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: boringNotch
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.build.outputs.tag_name }}
+          files: boringNotch.dmg
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
