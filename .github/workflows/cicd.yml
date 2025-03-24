@@ -46,4 +46,4 @@ jobs:
         verbosity: xcpretty
         configuration: release
         code-sign-identity: '-'
-        destination: 'platform=macOS,arch=arm64'
+        arch: arm64
