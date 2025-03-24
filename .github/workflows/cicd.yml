@@ -54,7 +54,7 @@ jobs:
         rm -rf "$TEMP_DIR"
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: boringNotch
         path: ./build/boringNotch.dmg
