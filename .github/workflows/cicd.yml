@@ -46,3 +46,4 @@ jobs:
         verbosity: xcpretty
         upload-logs: always
         configuration: release
+        code-sign-identity: '-'
