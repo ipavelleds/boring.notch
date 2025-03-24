@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '*'
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - '*'
@@ -60,6 +62,7 @@ jobs:
         path: ./build/boringNotch.dmg
         
     - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v1
       with:
         files: ./build/boringNotch.dmg
