@@ -1,4 +1,4 @@
-name: Build for macos  platform
+name: Build for macos platform
 
 on:
   push:
@@ -16,34 +16,54 @@ concurrency:
 jobs:
   build:
     name: Build boringNotch
-    strategy:
-      matrix:
-        platform:
-          - macOS
-        scheme:
-          - boringNotch
     runs-on: macos-latest
     steps:
     - name: Switch xcode to latest-stable
       uses: maxim-lobanov/setup-xcode@v1.2.3
       with:
         xcode-version: latest-stable
+    
     - name: Code Checkout
       uses: actions/checkout@v2
-    - name: Check xcodebuild version
-      run: xcodebuild -version
-    - name: Check xcode embedded SDKs
-      run: xcodebuild -showsdks
-    - name: Show buildable schemes
-      run: xcodebuild -list
-    - name: Show eligible build destinations for ${{ matrix.scheme }}
-      run: xcodebuild -showdestinations -scheme ${{ matrix.scheme }}
-    - uses: mxcl/xcodebuild@v3
+      
+    - name: Resolve Swift dependencies
+      run: xcodebuild -resolvePackageDependencies
+      
+    - name: Build
+      run: |
+        xcodebuild -scheme boringNotch \
+          -configuration Release \
+          CODE_SIGN_IDENTITY="-" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          -archivePath ./build/boringNotch.xcarchive \
+          archive
+
+    - name: Create DMG
+      run: |
+        # Create a temporary directory for mounting
+        TEMP_DIR=$(mktemp -d)
+        
+        # Copy .app from archive to temp dir
+        cp -r ./build/boringNotch.xcarchive/Products/Applications/boringNotch.app "$TEMP_DIR/"
+        
+        # Create DMG
+        hdiutil create -volname "boringNotch" -srcfolder "$TEMP_DIR" -ov -format UDZO ./build/boringNotch.dmg
+        
+        # Cleanup
+        rm -rf "$TEMP_DIR"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
       with:
-        platform: ${{ matrix.platform }}
-        scheme: ${{ matrix.scheme }}
-        action: build
-        verbosity: xcpretty
-        configuration: release
-        code-sign-identity: '-'
-        arch: arm64
+        name: boringNotch
+        path: ./build/boringNotch.dmg
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./build/boringNotch.dmg
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
