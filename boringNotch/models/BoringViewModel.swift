@@ -102,7 +102,7 @@ class BoringViewModel: NSObject, ObservableObject {
     }
 
     func open() {
-        withAnimation(.bouncy) {
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
             self.notchSize = CGSize(width: openNotchSize.width, height: openNotchSize.height)
             self.notchState = .open
         }
@@ -131,7 +131,7 @@ class BoringViewModel: NSObject, ObservableObject {
     }
 
     func close() {
-        withAnimation(.smooth) {
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
             self.notchSize = getClosedNotchSize(screen: screen)
             closedNotchSize = notchSize
             self.notchState = .closed

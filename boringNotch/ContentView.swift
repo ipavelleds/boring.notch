@@ -40,24 +40,24 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .top) {
             NotchLayout()
-                .frame(alignment: .top)
+                .frame(alignment: .center)
                 .padding(.horizontal, vm.notchState == .open ? Defaults[.cornerRadiusScaling] ? (cornerRadiusInsets.opened - 5) : (cornerRadiusInsets.closed - 5) : 12)
                 .padding([.horizontal, .bottom], vm.notchState == .open ? 12 : 0)
                 .background(.black)
                 .mask {
                     NotchShape(cornerRadius: ((vm.notchState == .open) && Defaults[.cornerRadiusScaling]) ? cornerRadiusInsets.opened : cornerRadiusInsets.closed).drawingGroup()
                 }
-                .padding(.bottom, vm.notchState == .open ? 30 : 0) // Safe area to ensure the notch does not close if the cursor is within 30px of the notch from the bottom.
+                .padding(.bottom, vm.notchState == .open ? 30 : 0)
                 .conditionalModifier(!useModernCloseAnimation) { view in
-                            let notchStateAnimation = Animation.bouncy.speed(1.2)
-                            let hoverAnimationAnimation = Animation.bouncy.speed(1.2)
-                            return view
-                                .animation(notchStateAnimation, value: vm.notchState)
-                                .animation(hoverAnimationAnimation, value: hoverAnimation)
-                        }
+                    let notchStateAnimation = Animation.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0)
+                    let hoverAnimationAnimation = Animation.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0)
+                    return view
+                        .animation(notchStateAnimation, value: vm.notchState)
+                        .animation(hoverAnimationAnimation, value: hoverAnimation)
+                }
                 .conditionalModifier(useModernCloseAnimation) { view in
-                    let hoverAnimationAnimation = Animation.bouncy.speed(1.2)
-                    let notchStateAnimation = Animation.spring.speed(1.2)
+                    let hoverAnimationAnimation = Animation.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0)
+                    let notchStateAnimation = Animation.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0)
                     return view
                         .animation(hoverAnimationAnimation, value: hoverAnimation)
                         .animation(notchStateAnimation, value: vm.notchState)
@@ -203,16 +203,6 @@ struct ContentView: View {
                         Text("Settings")
                     })
                     .keyboardShortcut(KeyEquivalent(","), modifiers: .command)
-                    Button("Edit") {
-                        let dn = DynamicNotch(content: EditPanelView())
-                        dn.toggle()
-                    }
-                    #if DEBUG
-                    .disabled(false)
-                    #else
-                    .disabled(true)
-                    #endif
-                    .keyboardShortcut("E", modifiers: .command)
                 }
         }
         .frame(maxWidth: openNotchSize.width, maxHeight: openNotchSize.height, alignment: .top)
