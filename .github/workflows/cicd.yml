@@ -55,8 +55,20 @@ jobs:
           CODE_SIGN_IDENTITY="-" \
           CODE_SIGNING_REQUIRED=NO \
           CODE_SIGNING_ALLOWED=NO \
+          OTHER_CODE_SIGN_FLAGS="--options=runtime" \
           -archivePath ./build/boringNotch.xcarchive \
           archive
+
+    - name: Prepare App for Distribution
+      run: |
+        # Remove quarantine attribute
+        xattr -cr ./build/boringNotch.xcarchive/Products/Applications/boringNotch.app
+        
+        # Add hardened runtime and allow unsigned executable
+        codesign --force --deep --sign - \
+          --entitlements /dev/null \
+          --options runtime \
+          ./build/boringNotch.xcarchive/Products/Applications/boringNotch.app
 
     - name: Create DMG
       run: |
