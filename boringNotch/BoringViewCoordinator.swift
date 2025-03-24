@@ -8,7 +8,6 @@
 import Combine
 import Defaults
 import SwiftUI
-import TheBoringWorkerNotifier
 
 enum SneakContentType {
     case brightness
@@ -36,7 +35,6 @@ struct SharedSneakPeek: Codable {
 
 class BoringViewCoordinator: ObservableObject {
     static let shared = BoringViewCoordinator()
-    var notifier: TheBoringWorkerNotifier = .init()
     
     @Published var currentView: NotchViews = .home
     private var sneakPeekDispatch: DispatchWorkItem?
@@ -67,7 +65,7 @@ class BoringViewCoordinator: ObservableObject {
     
     @AppStorage("hudReplacement") var hudReplacement: Bool = true {
         didSet {
-            notifier.postNotification(name: notifier.toggleHudReplacementNotification.name, userInfo: nil)
+            // Removed notification
         }
     }
     
@@ -84,12 +82,9 @@ class BoringViewCoordinator: ObservableObject {
     
     private init() {
         selectedScreen = preferredScreen
-        notifier = TheBoringWorkerNotifier()
     }
     
     func setupWorkersNotificationObservers() {
-        notifier.setupObserver(notification: notifier.micStatusNotification, handler: initialMicStatus)
-        notifier.setupObserver(notification: notifier.sneakPeakNotification, handler: sneakPeekEvent)
     }
     
     @objc func sneakPeekEvent(_ notification: Notification) {
@@ -155,10 +150,6 @@ class BoringViewCoordinator: ObservableObject {
     
     @objc func initialMicStatus(_ notification: Notification) {
         currentMicStatus = notification.userInfo?.first?.value as! Bool
-    }
-    
-    func toggleMic() {
-        notifier.postNotification(name: notifier.toggleMicNotification.name, userInfo: nil)
     }
     
     func showEmpty() {

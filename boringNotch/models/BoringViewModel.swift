@@ -8,7 +8,6 @@
 import Combine
 import Defaults
 import SwiftUI
-import TheBoringWorkerNotifier
 
 enum BrowserType {
     case chromium
@@ -44,8 +43,6 @@ class BoringViewModel: NSObject, ObservableObject {
     @Published var notchSize: CGSize = getClosedNotchSize()
     @Published var closedNotchSize: CGSize = getClosedNotchSize()
 
-    var notifier: TheBoringWorkerNotifier = .init()
-
     @Published var expandingView: ExpandedItem = .init() {
         didSet {
             if expandingView.show {
@@ -75,7 +72,6 @@ class BoringViewModel: NSObject, ObservableObject {
 
         super.init()
 
-        notifier = coordinator.notifier
         self.screen = screen
         notchSize = getClosedNotchSize(screen: screen)
         closedNotchSize = notchSize
@@ -146,13 +142,6 @@ class BoringViewModel: NSObject, ObservableObject {
         }
     }
 
-    func openClipboard() {
-        notifier.postNotification(name: notifier.showClipboardNotification.name, userInfo: nil)
-    }
-
-    func toggleClipboard() {
-        openClipboard()
-    }
 
     func closeHello() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
