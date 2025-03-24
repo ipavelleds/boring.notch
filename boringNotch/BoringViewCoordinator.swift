@@ -63,12 +63,6 @@ class BoringViewCoordinator: ObservableObject {
         }
     }
     
-    @AppStorage("hudReplacement") var hudReplacement: Bool = true {
-        didSet {
-            // Removed notification
-        }
-    }
-    
     @AppStorage("preferred_screen_name") var preferredScreen = NSScreen.main?.localizedName ?? "Unknown" {
         didSet {
             selectedScreen = preferredScreen
@@ -106,12 +100,7 @@ class BoringViewCoordinator: ObservableObject {
     
     func toggleSneakPeek(status: Bool, type: SneakContentType, duration: TimeInterval = 1.5, value: CGFloat = 0, icon: String = "") {
         sneakPeekDuration = duration
-        if type != .music {
-            // close()
-            if !hudReplacement {
-                return
-            }
-        }
+
         DispatchQueue.main.async {
             withAnimation(.smooth) {
                 self.sneakPeek.show = status

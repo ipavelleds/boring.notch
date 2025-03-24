@@ -37,14 +37,8 @@ struct SettingsView: View {
                 NavigationLink(destination: CalendarSettings()) {
                     Label("Calendar", systemImage: "calendar")
                 }
-                if extensionManager.installedExtensions
-                    .contains(
-                        where: { $0.bundleIdentifier == hudExtension
-                        })
-                {
-                    NavigationLink(destination: HUD()) {
-                        Label("HUDs", systemImage: "dial.medium.fill")
-                    }
+                NavigationLink(destination: HUD()) {
+                    Label("HUDs", systemImage: "dial.medium.fill")
                 }
                 NavigationLink(destination: Charge()) {
                     Label("Battery", systemImage: "battery.100.bolt")
@@ -405,31 +399,11 @@ struct Downloads: View {
 
 struct HUD: View {
     @EnvironmentObject var vm: BoringViewModel
-    @Default(.inlineHUD) var inlineHUD
     @Default(.enableGradient) var enableGradient
     @ObservedObject var coordinator = BoringViewCoordinator.shared
     var body: some View {
         Form {
             Section {
-                Toggle("Enable HUD replacement", isOn: $coordinator.hudReplacement)
-            } header: {
-                Text("General")
-            }
-            Section {
-                Picker("HUD style", selection: $inlineHUD) {
-                    Text("Default")
-                        .tag(false)
-                    Text("Inline")
-                        .tag(true)
-                }
-                .onChange(of: Defaults[.inlineHUD]) {
-                    if Defaults[.inlineHUD] {
-                        withAnimation {
-                            Defaults[.systemEventIndicatorShadow] = false
-                            Defaults[.enableGradient] = false
-                        }
-                    }
-                }
                 Picker("Progressbar style", selection: $enableGradient) {
                     Text("Hierarchical")
                         .tag(false)
@@ -462,7 +436,7 @@ struct Media: View {
                     "Enable music live activity",
                     isOn: $coordinator.showMusicLiveActivityOnClosed.animation()
                 )
-                Defaults.Toggle("Enable sneak peek", key: .enableSneakPeek)
+                Defaults.Toggle("Enable sneak peek", key: .enableMediaSneakPeek)
                 HStack {
                     Stepper(value: $waitInterval, in: 0...10, step: 1) {
                         HStack {

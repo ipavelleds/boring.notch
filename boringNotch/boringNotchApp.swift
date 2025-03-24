@@ -183,8 +183,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
             self.coordinator.toggleSneakPeek(
                 status: !self.coordinator.sneakPeek.show,
-                type: .music,
-                duration: 3.0
+                type: .brightness,
+                duration: 3.0,
+                value: 0.6
             )
         }
 

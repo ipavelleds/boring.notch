@@ -327,9 +327,6 @@
         }
       }
     },
-    "Enable HUD replacement" : {
-
-    },
     "Enable music live activity" : {
 
     },
@@ -405,16 +402,10 @@
     "High" : {
 
     },
-    "HUD style" : {
-
-    },
     "HUDs" : {
 
     },
     "In progress" : {
-
-    },
-    "Inline" : {
 
     },
     "Install updates automatically" : {
@@ -522,9 +513,6 @@
 
     },
     "More" : {
-
-    },
-    "muted" : {
 
     },
     "Name" : {
@@ -821,9 +809,6 @@
 
     },
     "Unlock advanced features and improve your experience. Upgrade now for more customizations!" : {
-
-    },
-    "unmuted" : {
 
     },
     "Upgrade to Pro" : {

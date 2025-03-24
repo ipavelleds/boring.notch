@@ -88,7 +88,7 @@ extension Defaults.Keys {
     
         // MARK: Media playback
     static let coloredSpectrogram = Key<Bool>("coloredSpectrogram", default: true)
-    static let enableSneakPeek = Key<Bool>("enableSneakPeek", default: false)
+    static let enableMediaSneakPeek = Key<Bool>("enableMediaSneakPeek", default: false)
     static let enableFullscreenMediaDetection = Key<Bool>("enableFullscreenMediaDetection", default: true)
     static let waitInterval = Key<Double>("waitInterval", default: 3)
     
@@ -103,7 +103,6 @@ extension Defaults.Keys {
     static let selectedDownloadIconStyle = Key<DownloadIconStyle>("selectedDownloadIconStyle", default: DownloadIconStyle.onlyAppIcon)
     
         // MARK: HUD
-    static let inlineHUD = Key<Bool>("inlineHUD", default: false)
     static let enableGradient = Key<Bool>("enableGradient", default: false)
     static let systemEventIndicatorShadow = Key<Bool>("systemEventIndicatorShadow", default: false)
     static let systemEventIndicatorUseAccent = Key<Bool>("systemEventIndicatorUseAccent", default: false)

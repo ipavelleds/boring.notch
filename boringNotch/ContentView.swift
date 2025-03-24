@@ -249,9 +249,6 @@ struct ContentView: View {
                             .frame(width: 76, alignment: .trailing)
                         }
                         .frame(height: vm.closedNotchSize.height + (hoverAnimation ? 8 : 0), alignment: .center)
-                    } else if coordinator.sneakPeek.show && Defaults[.inlineHUD] && (coordinator.sneakPeek.type != .music) && (vm.expandingView.type != .battery) {
-                        InlineHUD(type: $coordinator.sneakPeek.type, value: $coordinator.sneakPeek.value, icon: $coordinator.sneakPeek.icon, hoverAnimation: $hoverAnimation, gestureProgress: $gestureProgress)
-                            .transition(.opacity)
                     } else if !vm.expandingView.show && vm.notchState == .closed && (musicManager.isPlaying || !musicManager.isPlayerIdle) && coordinator.showMusicLiveActivityOnClosed {
                         MusicLiveActivity()
                     } else if !vm.expandingView.show && vm.notchState == .closed && (!musicManager.isPlaying && musicManager.isPlayerIdle) && Defaults[.showNotHumanFace] {
@@ -265,7 +262,7 @@ struct ContentView: View {
                         Rectangle().fill(.clear).frame(width: vm.closedNotchSize.width - 20, height: vm.closedNotchSize.height)
                     }
 
-                    if coordinator.sneakPeek.show && !Defaults[.inlineHUD] {
+                    if coordinator.sneakPeek.show {
                         if (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .battery) {
                             SystemEventIndicatorModifier(eventType: $coordinator.sneakPeek.type, value: $coordinator.sneakPeek.value, icon: $coordinator.sneakPeek.icon, sendEventBack: { _ in
                                 //
@@ -273,7 +270,7 @@ struct ContentView: View {
                             .padding(.bottom, 10)
                             .padding(.leading, 4)
                             .padding(.trailing, 8)
-                        } else if vm.expandingView.type != .battery {
+                        } else if (coordinator.sneakPeek.type == .music) {
                             if vm.notchState == .closed {
                                 HStack(alignment: .center) {
                                     Image(systemName: "music.note")
