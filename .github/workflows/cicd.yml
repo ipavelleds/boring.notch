@@ -24,7 +24,7 @@ jobs:
         xcode-version: latest-stable
     
     - name: Code Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       
     - name: Resolve Swift dependencies
       run: xcodebuild -resolvePackageDependencies
