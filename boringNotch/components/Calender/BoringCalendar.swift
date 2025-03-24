@@ -262,6 +262,18 @@ struct EventListView: View {
                             .buttonStyle(.plain)
 
                             Spacer(minLength: 0)
+                            
+                            if let zoomUrl = extractZoomLink(from: events[index]) {
+                                Button {
+                                    openURL(zoomUrl)
+                                } label: {
+                                    Image(systemName: "video.fill")
+                                        .font(.caption2)
+                                        .foregroundStyle(Defaults[.accentColor])
+                                }
+                                .buttonStyle(.plain)
+                                .help("Join Zoom Meeting")
+                            }
                         }
                         .opacity(isEventEnded(events[index].endDate) ? 0.6 : 1)
                     }
@@ -300,6 +312,20 @@ struct EventListView: View {
             }
         }
         return URL(string: "ical://ekevent\(dateComponent)/\(event.calendarItemIdentifier)?method=show&options=more")
+    }
+
+    private func extractZoomLink(from event: EKEvent) -> URL? {
+        let possibleFields = [event.notes, event.location, event.url?.absoluteString]
+        let zoomPattern = #"https?://[^\s]*zoom\.us(?:/j/|/my/)[^\s]*?(?=\s|$)"#
+        
+        for field in possibleFields {
+            guard let text = field else { continue }
+            if let range = text.range(of: zoomPattern, options: .regularExpression) {
+                let zoomLink = String(text[range])
+                return URL(string: zoomLink)
+            }
+        }
+        return nil
     }
 }
 
